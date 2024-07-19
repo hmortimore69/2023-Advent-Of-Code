@@ -1,7 +1,8 @@
 use std::fs;
 
 fn main() {
-    let contents = fs::read_to_string("resources/dayOne/data.txt").expect("Something went wrong reading the file");
+    let contents = fs::read_to_string("resources/dayOne/data.txt")
+        .expect("Something went wrong reading the file");
     let mut total = 0;
     let digit_map = [
         ("zero", "0"),
@@ -19,22 +20,23 @@ fn main() {
     for line in contents.lines() {
         let mut str_line = line.to_string();
         for (word, digit) in digit_map.iter() {
-            let first_char = word.chars().next().unwrap(); 
-            let last_char = word.chars().last().unwrap(); 
+            let first_char = word.chars().next().unwrap();
+            let last_char = word.chars().last().unwrap();
 
-            let replacement = format!("{}{}{}", first_char, digit, last_char); 
-            str_line = str_line.replace(word, &replacement); 
+            let replacement = format!("{}{}{}", first_char, digit, last_char);
+            str_line = str_line.replace(word, &replacement);
         }
-        
+
         let digits: Vec<char> = str_line.chars().filter(|c| c.is_digit(10)).collect();
 
         if !digits.is_empty() {
             let first_digit = digits.first().unwrap();
             let last_digit = digits.last().unwrap();
 
-            let calibration_value = format!("{}{}", first_digit, last_digit).parse::<i32>().unwrap();
-            
-            
+            let calibration_value = format!("{}{}", first_digit, last_digit)
+                .parse::<i32>()
+                .unwrap();
+
             total += calibration_value;
         }
     }
