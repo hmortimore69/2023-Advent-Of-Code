@@ -1,7 +1,7 @@
 use std::fs;
 
 fn main() {
-    let contents = fs::read_to_string("resources/dayOne/input.txt").expect("Something went wrong reading the file");
+    let contents = fs::read_to_string("resources/dayOne/data.txt").expect("Something went wrong reading the file");
     let mut total = 0;
     let digit_map = [
         ("zero", "0"),
