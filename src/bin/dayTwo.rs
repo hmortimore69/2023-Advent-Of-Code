@@ -1,5 +1,5 @@
-use std::fs;
 use std::collections::HashMap;
+use std::fs;
 
 fn main() {
     let file = fs::read_to_string("resources/dayTwo/data.txt")
@@ -14,7 +14,8 @@ fn main() {
 
     for line in file.lines() {
         let mut line_split: Vec<&str> = Vec::new();
-        let mut min_count: HashMap<&str, usize> = HashMap::from([("red", 0), ("green", 0), ("blue", 0)]);
+        let mut min_count: HashMap<&str, usize> =
+            HashMap::from([("red", 0), ("green", 0), ("blue", 0)]);
 
         let game_id = match line[5..(line.find(':').unwrap())].parse::<usize>() {
             Ok(id) => id,
@@ -24,21 +25,25 @@ fn main() {
             }
         };
 
-        let ball_counts: Vec<&str> = line.split(": ").last().unwrap().split("; ").collect(); 
+        let ball_counts: Vec<&str> = line.split(": ").last().unwrap().split("; ").collect();
         line_split.extend(ball_counts.iter().flat_map(|item| item.split(", ")));
 
         let mut line_processed = true;
         for item in line_split {
-            let (number, color) = if let [num, col] = item.split_whitespace().collect::<Vec<_>>()[..] {
-                (num.parse::<usize>().unwrap_or_else(|_| {
+            let (number, color) =
+                if let [num, col] = item.split_whitespace().collect::<Vec<_>>()[..] {
+                    (
+                        num.parse::<usize>().unwrap_or_else(|_| {
+                            line_processed = false;
+                            println!("Error parsing number, skipping item: {}", item);
+                            0
+                        }),
+                        col,
+                    )
+                } else {
                     line_processed = false;
-                    println!("Error parsing number, skipping item: {}", item);
-                    0
-                }), col)
-            } else {
-                line_processed = false;
-                continue;
-            };
+                    continue;
+                };
 
             let (color_max, _color_name) = match color {
                 "red" => (RED_MAX, "red"),
@@ -64,7 +69,15 @@ fn main() {
         if line_processed {
             total += game_id;
             let temp: u32 = (min_count["red"] * min_count["green"] * min_count["blue"]) as u32;
-            println!("Game ID: {}, Possible: {}, Min: (R: {}, G: {}, B: {}), Power: {}", game_id, line_processed, min_count["red"], min_count["green"], min_count["blue"], temp);
+            println!(
+                "Game ID: {}, Possible: {}, Min: (R: {}, G: {}, B: {}), Power: {}",
+                game_id,
+                line_processed,
+                min_count["red"],
+                min_count["green"],
+                min_count["blue"],
+                temp
+            );
             power_factors += temp;
         }
     }
