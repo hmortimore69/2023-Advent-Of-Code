@@ -1,17 +1,20 @@
 use std::fs;
+use std::collections::HashMap;
 
 fn main() {
     let file = fs::read_to_string("resources/dayTwo/data.txt")
         .expect("Something went wrong reading the file");
 
     let mut total = 0;
+    let mut power_factors: u32 = 0;
 
-    const RED_MAX: usize = 12;
-    const GREEN_MAX: usize = 13;
-    const BLUE_MAX: usize = 14;
+    const RED_MAX: usize = 100; // Part One -> Set to 12
+    const GREEN_MAX: usize = 100; // Part Two -> Set to 13
+    const BLUE_MAX: usize = 100; // Part Three -> Set to 14
 
     for line in file.lines() {
         let mut line_split: Vec<&str> = Vec::new();
+        let mut min_count: HashMap<&str, usize> = HashMap::from([("red", 0), ("green", 0), ("blue", 0)]);
 
         let game_id = match line[5..(line.find(':').unwrap())].parse::<usize>() {
             Ok(id) => id,
@@ -48,17 +51,23 @@ fn main() {
                 }
             };
 
+            if number > *min_count.get(color).unwrap() {
+                min_count.insert(color, number);
+            }
+
             if number > color_max {
                 line_processed = false;
                 break;
             }
         }
 
-        println!("Game ID: {}, Possible: {}", game_id, line_processed);
         if line_processed {
             total += game_id;
+            let temp: u32 = (min_count["red"] * min_count["green"] * min_count["blue"]) as u32;
+            println!("Game ID: {}, Possible: {}, Min: (R: {}, G: {}, B: {}), Power: {}", game_id, line_processed, min_count["red"], min_count["green"], min_count["blue"], temp);
+            power_factors += temp;
         }
     }
 
-    println!("Total: {}", total);
+    println!("Total: {}, Power: {:?}", total, power_factors);
 }
